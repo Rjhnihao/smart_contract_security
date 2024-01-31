@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Rules>
+    <Rule>
+        <RuleId>SOLIDITY</RuleId>
+        <Patterns>
+            <Pattern patternId="重入攻击">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <XPath>
+                    //expression[.//identifier[token='msg'] and .//identifier[token='sender'] and .//identifier[token='call'] and .//identifier[token='value'] ]
+                    /ancestor::statement
+                        [
+                            following-sibling::statement//expression[ .//token='[' and .//identifier[token='balances'] and .//token=']' and .//identifier[token='msg'] and .//identifier[token='sender']]]
+                        ]
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+</Rules>

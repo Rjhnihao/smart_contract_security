@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Rules >
+    <Rule>
+        <RuleId>SOLIDITY_IntegerOverflow</RuleId>
+        <Patterns>
+            <!-- -->
+            <Pattern patternId="SIO001">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>3</Severity>
+                <XPath>
+                    //expression[text()[1] = "="]
+                    [ancestor::contractDefinition][ancestor::contractDefinition/identifier[not(matches(text()[1], "SafeMath"))]]
+                    [ancestor::functionDefinition[not(visibleType = "internal" or visibleType = "private")]]
+                    [not(ancestor::functionCall/functionName/identifier[matches(text()[1], "require|assert|revert")])]
+                    [
+                    expression[2]
+                        [plusminusOperator or muldivOperator/mulOperator]
+                        [
+                            (expression[1]/primaryExpression/identifier
+                            [
+                                text()[1] = (ancestor::functionDefinition//variableDeclaration[typeName/elementaryTypeName[matches(text()[1], "uint|int")]]/identifier)
+                                or text()[1]= (ancestor::contractDefinition//stateVariableDeclaration[typeName/elementaryTypeName[matches(text()[1], "uint|int")]]/identifier)
+                                or text()[1] = (ancestor::functionDefinition/parameterList/parameter[typeName/elementaryTypeName[matches(text()[1], "uint|int")]]/identifier)
+                            ]
+                            and
+                            expression[2]/primaryExpression/identifier
+                            [
+                            text()[1] = (ancestor::functionDefinition/parameterList/parameter[typeName/elementaryTypeName[matches(text()[1], "uint|int")]]/identifier)
+                            ])
+                            or
+                            (expression[2]/primaryExpression/identifier
+                            [
+                            text()[1] = (ancestor::functionDefinition//variableDeclaration[typeName/elementaryTypeName[matches(text()[1], "uint|int")]]/identifier)
+                            or text()[1]= (ancestor::contractDefinition//stateVariableDeclaration[typeName/elementaryTypeName[matches(text()[1], "uint|int")]]/identifier)
+                            or text()[1] = (ancestor::functionDefinition/parameterList/parameter[typeName/elementaryTypeName[matches(text()[1], "uint|int")]]/identifier)
+                            ]
+                            and
+                            expression[1]/primaryExpression/identifier
+                            [
+                            text()[1] = (ancestor::functionDefinition/parameterList/parameter[typeName/elementaryTypeName[matches(text()[1], "uint|int")]]/identifier)
+                            ])
+                        ]
+                        [
+                            not(
+                                expression[1]/primaryExpression/identifier
+                                [
+                                text()[1] = (ancestor::ifStatement/condition//expression//expression//identifier)
+                                or  text()[1] = ancestor::*/preceding-sibling::statement/ifStatement/condition//expression//identifier
+                                ]
+                                and
+                                expression[2]/primaryExpression/identifier
+                                [
+                                text()[1] = (ancestor::ifStatement/condition//expression//expression//identifier)
+                                or  text()[1] = ancestor::*/preceding-sibling::statement/ifStatement/condition//expression//identifier
+                                ]
+                            )
+                        ]
+                        [
+                            not(
+                                    expression[1]/primaryExpression/identifier
+                                    [
+                                    text()[1] = ancestor::*/preceding-sibling::statement//functionCall[functionName/identifier[matches(text()[1], "require|assert|revert")]]/callArguments//expression[text()[1] =  ">" or text()[1] =  ">=" or text()[1] =  "&lt;" or text()[1] =  "&lt;="]
+                                    //expression//identifier
+                                    ]
+                                    and
+                                    expression[2]/primaryExpression/identifier
+                                    [
+                                    text()[1] = ancestor::*/preceding-sibling::statement//functionCall[functionName/identifier[matches(text()[1], "require|assert|revert")]]/callArguments//expression[text()[1] =  ">" or text()[1] =  ">=" or text()[1] =  "&lt;" or text()[1] =  "&lt;="]
+                                    //expression//identifier
+                                    ]
+                                )
+                        ]
+
+                    ]
+
+                </XPath>
+            </Pattern>
+            <Pattern patternId="SIO002">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>3</Severity>
+                <XPath>
+                    //variableDeclaration[text()[1] = "="]
+                    [ancestor::contractDefinition][ancestor::functionDefinition[not(visibleType = "internal" or visibleType = "private")]]
+                    [typeName/elementaryTypeName[matches(text()[1], "uint|int")]]
+                    [identifier[not(text()[1] = ancestor::block//functionCall[functionName/identifier[matches(text()[1], "require|assert|revert")]]//expression//identifier)] ]
+                    [
+                        expression
+                        [plusminusOperator or muldivOperator/mulOperator]
+                        [
+                            (expression[1]/primaryExpression/identifier
+                            [
+                            text()[1] = (ancestor::functionDefinition//variableDeclaration[typeName/elementaryTypeName[matches(text()[1], "uint|int")]]/identifier)
+                            or text()[1]= (ancestor::contractDefinition//stateVariableDeclaration[typeName/elementaryTypeName[matches(text()[1], "uint|int")]]/identifier)
+                            or  text()[1] = (ancestor::functionDefinition/parameterList/parameter[typeName/elementaryTypeName[matches(text()[1], "uint|int")]]/identifier)
+                            ]
+                            and
+                            expression[2]/primaryExpression/identifier
+                            [
+                            text()[1] = (ancestor::functionDefinition/parameterList/parameter[typeName/elementaryTypeName[matches(text()[1], "uint|int")]]/identifier)
+                            ])
+                            or
+                            (expression[2]/primaryExpression/identifier
+                            [
+                            text()[1] = (ancestor::functionDefinition//variableDeclaration[typeName/elementaryTypeName[matches(text()[1], "uint|int")]]/identifier)
+                            or text()[1]= (ancestor::contractDefinition//stateVariableDeclaration[typeName/elementaryTypeName[matches(text()[1], "uint|int")]]/identifier)
+                            or  text()[1] = (ancestor::functionDefinition/parameterList/parameter[typeName/elementaryTypeName[matches(text()[1], "uint|int")]]/identifier)
+                            ]
+                            and
+                            expression[1]/primaryExpression/identifier
+                            [
+                            text()[1] = (ancestor::functionDefinition/parameterList/parameter[typeName/elementaryTypeName[matches(text()[1], "uint|int")]]/identifier)
+                            ])
+
+                        ]
+                        [
+                            not(
+                            expression[1]/primaryExpression/identifier
+                            [
+                            text()[1] = (ancestor::ifStatement/condition//expression//expression//identifier)
+                            or  text()[1] = ancestor::*/preceding-sibling::statement/ifStatement/condition//expression//identifier
+                            ]
+                            and
+                            expression[2]/primaryExpression/identifier
+                            [
+                            text()[1] = (ancestor::ifStatement/condition//expression//expression//identifier)
+                            or  text()[1] = ancestor::*/preceding-sibling::statement/ifStatement/condition//expression//identifier
+                            ]
+                            )
+                        ]
+                        [
+                            not(
+                            expression[1]/primaryExpression/identifier
+                            [
+                            text()[1] = ancestor::*/preceding-sibling::statement//functionCall[functionName/identifier[matches(text()[1], "require|assert|revert")]]/callArguments//expression[text()[1] =  ">" or text()[1] =  ">=" or text()[1] =  "&lt;" or text()[1] =  "&lt;="]
+                            //expression//identifier
+                            ]
+                            and
+                            expression[2]/primaryExpression/identifier
+                            [
+                            text()[1] = ancestor::*/preceding-sibling::statement//functionCall[functionName/identifier[matches(text()[1], "require|assert|revert")]]/callArguments//expression[text()[1] =  ">" or text()[1] =  ">=" or text()[1] =  "&lt;" or text()[1] =  "&lt;="]
+                            //expression//identifier
+                            ]
+                            )
+                        ]
+                    ]
+
+                </XPath>
+            </Pattern>
+            <Pattern patternId="SIO003">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>3</Severity>
+                <XPath>
+                    //expression[text()[1] =  ">" or text()[1] =  ">=" or text()[1] =  "&lt;" or text()[1] =  "&lt;="]
+                    [not(ancestor::expression[text()[1] = "["])]
+                    [ancestor::contractDefinition][ancestor::functionDefinition[not(visibleType = "internal" or visibleType = "private")]]
+                    [ancestor::functionCall/functionName[identifier[matches(text()[1], "require|assert|revert")]]
+                    or (ancestor::ifStatement and ancestor::condition)]
+                    [expression[plusminusOperator or muldivOperator/mulOperator]]
+                    [
+                        expression[1]
+                        [plusminusOperator or muldivOperator/mulOperator]
+                        [
+                            expression//identifier
+                            [
+                            text()[1] = (ancestor::functionDefinition/parameterList/parameter[typeName/elementaryTypeName[matches(text()[1], "uint|int")]]/identifier)
+                            ]
+                        ]
+                    ]
+                    [not(
+                        expression[1]
+                        [plusminusOperator or muldivOperator/mulOperator]
+                        [
+                            expression//identifier
+                            [text()[1] = ancestor::callArguments/expression/expression[2]//identifier]
+                        ]
+                    )
+                    ]
+                </XPath>
+            </Pattern>
+            <Pattern patternId="SIO004">
+                <Categories>
+                    <Category>Solidity</Category>
+                </Categories>
+                <Severity>3</Severity>
+                <XPath>
+                    //expression[ancestor::contractDefinition][ancestor::functionDefinition[not(visibleType = "internal" or visibleType = "private")]]
+                    [lvalueOperator/minusLvalueOperator or lvalueOperator/mulLvalueOperator]
+                    [not(expression[2]/primaryExpression/numberLiteral)]
+                    [
+                        expression[1]/expression[1]/primaryExpression/identifier
+                        [
+                            text()[1] = (ancestor::functionDefinition//variableDeclaration[typeName/elementaryTypeName[matches(text()[1], "uint|int")]]/identifier)
+                            or text()[1]= (ancestor::contractDefinition//stateVariableDeclaration[typeName/elementaryTypeName[matches(text()[1], "uint|int")]]/identifier)
+                            or text()[1] = (ancestor::functionDefinition/parameterList/parameter[typeName/elementaryTypeName[matches(text()[1], "uint|int")]]/identifier)
+
+                        ]
+                        or
+                        expression[1]/primaryExpression/identifier
+                        [
+                            text()[1] = (ancestor::functionDefinition//variableDeclaration[typeName/elementaryTypeName[matches(text()[1], "uint|int")]]/identifier)
+                            or text()[1]= (ancestor::contractDefinition//stateVariableDeclaration[typeName/elementaryTypeName[matches(text()[1], "uint|int")]]/identifier)
+                            or text()[1] = (ancestor::functionDefinition/parameterList/parameter[typeName/elementaryTypeName[matches(text()[1], "uint|int")]]/identifier)
+                        ]
+                        or
+                        expression[2]/primaryExpression/identifier
+                        [
+                            text()[1] = (ancestor::functionDefinition//variableDeclaration[typeName/elementaryTypeName[matches(text()[1], "uint|int")]]/identifier)
+                            or text()[1]= (ancestor::contractDefinition//stateVariableDeclaration[typeName/elementaryTypeName[matches(text()[1], "uint|int")]]/identifier)
+                            or text()[1] = (ancestor::functionDefinition/parameterList/parameter[typeName/elementaryTypeName[matches(text()[1], "uint|int")]]/identifier)
+                        ]
+                    ]
+                    [
+                        not(
+                        (expression[1]//expression[ancestor::expression[text()[1] = "["]]/expression[1]/primaryExpression/identifier
+                        [
+                        text()[1] = (ancestor::ifStatement/condition//expression//expression//identifier)
+                        or  text()[1] = ancestor::*/preceding-sibling::statement/ifStatement/condition//expression//identifier
+                        ]
+                        or
+                        expression[1]/expression[1]/primaryExpression/identifier
+                        [
+                        text()[1] = (ancestor::ifStatement/condition//expression//expression//identifier)
+                        or  text()[1] = ancestor::*/preceding-sibling::statement/ifStatement/condition//expression//identifier
+                        ]
+                        or
+                        expression[1]/primaryExpression/identifier
+                        [
+                        text()[1] = (ancestor::ifStatement/condition//expression//expression//identifier)
+                        or  text()[1] = ancestor::*/preceding-sibling::statement/ifStatement/condition//expression//identifier
+                        ])
+                        and
+                        expression[2]/primaryExpression/identifier
+                        [
+                        text()[1] = (ancestor::ifStatement/condition//expression//expression//identifier)
+                        or  text()[1] = ancestor::*/preceding-sibling::statement/ifStatement/condition//expression//identifier
+                        ]
+                        )
+                    ]
+                    [
+                    not(
+                            (expression[1]//expression[ancestor::expression[text()[1] = "["]]/expression[1]/primaryExpression/identifier
+                            [
+                            text()[1] = ancestor::*/preceding-sibling::statement//functionCall[functionName/identifier[matches(text()[1], "require|assert|revert")]]/callArguments//expression[text()[1] =  ">" or text()[1] =  ">=" or text()[1] =  "&lt;" or text()[1] =  "&lt;="]
+                            //expression//identifier
+                            ]
+                            or
+                            expression[1]/expression[1]/primaryExpression/identifier
+                            [
+                            text()[1] = ancestor::*/preceding-sibling::statement//functionCall[functionName/identifier[matches(text()[1], "require|assert|revert")]]/callArguments//expression[text()[1] =  ">" or text()[1] =  ">=" or text()[1] =  "&lt;" or text()[1] =  "&lt;="]
+                            //expression//identifier
+                            ]
+                            or
+                            expression[1]/primaryExpression/identifier
+                            [
+                            text()[1] = ancestor::*/preceding-sibling::statement//functionCall[functionName/identifier[matches(text()[1], "require|assert|revert")]]/callArguments//expression[text()[1] =  ">" or text()[1] =  ">=" or text()[1] =  "&lt;" or text()[1] =  "&lt;="]
+                            //expression//identifier
+                            ])
+                            and
+                            expression[2]/primaryExpression/identifier
+                            [
+                            text()[1] = ancestor::*/preceding-sibling::statement//functionCall[functionName/identifier[matches(text()[1], "require|assert|revert")]]/callArguments//expression[text()[1] =  ">" or text()[1] =  ">=" or text()[1] =  "&lt;" or text()[1] =  "&lt;="]
+                            //expression//identifier
+                            ]
+                        )
+                    ]
+                    [not(
+                        expression[2]/primaryExpression/identifier = ancestor::functionDefinition/functionCall[functionName/identifier[text()[1] = ancestor::sourceUnit//modifierDefinition/identifier]]/callArguments//identifier
+                        )
+                    ]
+                    <!--[
+                    not(
+                        expression[1]//expression[not(ancestor::expression[text()[1] = "["])]/primaryExpression/identifier
+                        [
+                        text()[1] = (ancestor::*/preceding-sibling::statement//functionCall[functionName/identifier[matches(text()[1], "require|assert|revert")]]/callArguments//expression[text()[1] =  ">" or text()[1] =  ">=" or text()[1] =  "&lt;" or text()[1] =  "&lt;="]
+                        /expression[1]//identifier)
+                        ]
+                        or
+                        expression[1]/primaryExpression/identifier
+                        [
+                        text()[1] = (ancestor::*/preceding-sibling::statement//functionCall[functionName/identifier[matches(text()[1], "require|assert|revert")]]/callArguments//expression[text()[1] =  ">" or text()[1] =  ">=" or text()[1] =  "&lt;" or text()[1] =  "&lt;="]
+                        /expression[1]//identifier)
+                        ]
+                        or
+                        expression[2]/primaryExpression/identifier
+                        [
+                        text()[1] = (ancestor::*/preceding-sibling::statement//functionCall[functionName/identifier[matches(text()[1], "require|assert|revert")]]/callArguments//expression[text()[1] =  ">" or text()[1] =  ">=" or text()[1] =  "&lt;" or text()[1] =  "&lt;="]
+                        /expression[1]//identifier)
+                        ]
+                        or
+                        expression[1]/primaryExpression/identifier
+                        [text()[1] = (ancestor::*/preceding-sibling::statement//functionCall[functionName/identifier[matches(text()[1], "require|assert|revert")]]/callArguments[//expression[not(matches(text()[1], "plusminusOperator | muldivOperator"))]]/expression[text()[1] =  ">" or text()[1] =  ">=" or text()[1] =  "&lt;" or text()[1] =  "&lt;="]
+                        /expression/primaryExpression/identifier)
+                        ]
+                        or
+                        expression[2]/primaryExpression/identifier
+                        [text()[1] = (ancestor::*/preceding-sibling::statement//functionCall[functionName/identifier[matches(text()[1], "require|assert|revert")]]/callArguments[//expression[not(matches(text()[1], "plusminusOperator | muldivOperator"))]]/expression[text()[1] =  ">" or text()[1] =  ">=" or text()[1] =  "&lt;" or text()[1] =  "&lt;="]
+                        /expression/primaryExpression/identifier)
+                        ]
+                        or
+                        expression[1]//expression[not(ancestor::expression[text()[1] = "["])]/primaryExpression/identifier
+                        [text()[1] = (ancestor::*/preceding-sibling::statement//functionCall[functionName/identifier[matches(text()[1], "require|assert|revert")]]/callArguments[//expression[not(matches(text()[1], "plusminusOperator | muldivOperator"))]]/expression[text()[1] =  ">" or text()[1] =  ">=" or text()[1] =  "&lt;" or text()[1] =  "&lt;="]
+                        /expression/primaryExpression/identifier)
+                        ]
+                        )
+                    ]-->
+
+                </XPath>
+            </Pattern>
+        </Patterns>
+    </Rule>
+
+
+</Rules>
